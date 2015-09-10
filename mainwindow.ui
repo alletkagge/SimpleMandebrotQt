@@ -170,10 +170,10 @@
         <item>
          <widget class="QSlider" name="sldZoom">
           <property name="maximum">
-           <number>10000000</number>
+           <number>1000000000</number>
           </property>
           <property name="value">
-           <number>0</number>
+           <number>100000</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -186,10 +186,13 @@
            <number>8</number>
           </property>
           <property name="maximum">
-           <double>2.000000000000000</double>
+           <double>1000.000000000000000</double>
           </property>
           <property name="singleStep">
            <double>0.000001000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
           </property>
          </widget>
         </item>

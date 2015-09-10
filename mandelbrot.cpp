@@ -38,7 +38,7 @@ void drawMandelbrot(QImage & image, int iterations, QVector2D offset, double siz
 
             if(image.format() == QImage::Format_Indexed8)
             {
-                *(scanline + x * byteOffset) = 255 * color;
+                *(scanline + x * byteOffset) = i % (image.colorCount() + 1);// * color;
             }
             //image.setPixel(x, y, qRgb(i % 256, i % 256, i % 256));
             //image.setPixel(x, y, i % 256);

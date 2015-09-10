@@ -26,11 +26,15 @@ MainWindow::MainWindow(QWidget *parent) :
     start = ComplexNumber(0,0);
 
     //QVector<QRgb> colors;
-    for(int i = 0; i < 256; ++i)
+    int colorCount = 1 << 10;
+    for(int i = 0; i < colorCount; ++i)
     {
-        colors.append(qRgb((i % 32) * 8, (i % 64) * 4, (i % 128) * 2));
+        colors.append(qRgb(((2*i*i*i*i - 128) % 256), ((2 * i*i + 4) % 256), ((32*i*i*i + 32) % 256)));
     }
     colors.append(qRgb(0, 0, 0));
+
+    ui->sldIterations->setMaximum(colorCount);
+    ui->spnIterations->setMaximum(colorCount);
 
     QImage mandel = QImage(imageSize, QImage::Format_Indexed8);
     mandel.setColorTable(colors);
@@ -83,7 +87,7 @@ void MainWindow::on_sldOffsetY_valueChanged(int value)
 void MainWindow::on_sldZoom_valueChanged(int value)
 {
     size = 2.0 - ((2.0 * (double)value / (double)ui->sldZoom->maximum() - 0.0));
-    ui->spnZoom->setValue(2.0 - size);
+    ui->spnZoom->setValue(1000.0 - size * 500.0);
     if(iterations < 50) ui->btnRender->click();
 }
 
@@ -98,7 +102,7 @@ void MainWindow::on_btnRender_clicked()
 
 void MainWindow::on_spnZoom_valueChanged(double arg1)
 {
-    ui->sldZoom->setValue((ui->sldZoom->maximum() * (arg1 * 0.5)));
+    ui->sldZoom->setValue((ui->sldZoom->maximum() * (arg1 * 0.001)));
 }
 
 void MainWindow::on_spnIterations_valueChanged(int arg1)
