@@ -7,9 +7,8 @@
 #include <QVector>
 #include <QRgb>
 
-#include <cmath>
-
 #include "complexnumber.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -50,6 +49,8 @@ private:
     double size;
     QVector<QRgb> colors;
     ComplexNumber start;
+
+    QImage mainImage;
 };
 
 #endif // MAINWINDOW_H

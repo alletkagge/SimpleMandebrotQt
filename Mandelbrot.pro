@@ -11,11 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Mandelbrot
 TEMPLATE = app
 
-QMAKE_CXXFLAGS += -O3
+QMAKE_CXXFLAGS += -O3 -fopenmp
+QMAKE_LFLAGS += -fopenmp
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    complexnumber.cpp \
     mandelbrot.cpp
 
 HEADERS  += mainwindow.h \
