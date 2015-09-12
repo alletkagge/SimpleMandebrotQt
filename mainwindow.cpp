@@ -34,24 +34,26 @@ MainWindow::MainWindow(QWidget *parent) :
         colors.append(qRgb(((i) % 32) * 8, ((i) % 64) * 4, ((i) % 128) * 2));
     }
     colors.append(qRgb(0, 0, 0));
-/*
-    MandelbrotThread::setIterations(iterations);
-    MandelbrotThread::setCritical(ComplexNumber(0, 0));
-    MandelbrotThread::setSize(size);
-    MandelbrotThread::setOffset(offset);
-    MandelbrotThread::setColorTable(colors);
-    MandelbrotThread::setImageSize(imageSize);
-    MandelbrotThread::setXtiles(2);
-    MandelbrotThread::setYtiles(1);
-*/
+
     ui->sldIterations->setMaximum(colorCount);
     ui->spnIterations->setMaximum(colorCount);
 
     mainImage = QImage(imageSize, QImage::Format_Indexed8);
     mainImage.setColorTable(colors);
-    mainImage.fill(qRgb(0, 0, 0));
+    mainImage.fill(Qt::black);
+    //mainImage.fill(qRgb(0, 0, 0));
+    MandelbrotThread::setIterations(iterations);
+    MandelbrotThread::setCritical(ComplexNumber(0, 0));
+    MandelbrotThread::setZoom(size);
+    MandelbrotThread::setOffset(offset);
+    MandelbrotThread::setImage(&mainImage);
 
-    ui->btnRender->click();
+    workThread = new MandelbrotThread();
+    connect(workThread, SIGNAL(finished()), this, SLOT(workThreadFinished()));
+
+    ui->lblImage->setPixmap(QPixmap::fromImage(mainImage));
+
+    startRender();
 }
 
 MainWindow::~MainWindow()
@@ -63,7 +65,8 @@ void MainWindow::on_sldIterations_valueChanged(int value)
 {
     iterations = value;
     ui->spnIterations->setValue(value);
-    ui->btnRender->click();
+    MandelbrotThread::setIterations(iterations);
+    startRender();
 }
 
 void MainWindow::on_sldOffsetX_valueChanged(int value)
@@ -75,8 +78,9 @@ void MainWindow::on_sldOffsetX_valueChanged(int value)
     double offsetx = offset.x() + (20.0 * (double)relativeOffset / (double)ui->sldOffsetX->maximum() - 0.0) * size;
     offset.setX(offsetx);
     ui->lblOffsetX->setText(QString::number(offsetx));
+    MandelbrotThread::setOffset(offset);
     //if(iterations < 50)
-    ui->btnRender->click();
+    startRender();
 }
 
 void MainWindow::on_sldOffsetY_valueChanged(int value)
@@ -87,23 +91,24 @@ void MainWindow::on_sldOffsetY_valueChanged(int value)
 
     double offsety = offset.y() + (20.0 * (double)relativeOffset / (double)ui->sldOffsetY->maximum() - 0.0) * size;
     offset.setY(offsety);
+    MandelbrotThread::setOffset(offset);
     ui->lblOffsetY->setText(QString::number(-offsety));
     //if(iterations < 50)
-    ui->btnRender->click();
+    startRender();
 }
 
 void MainWindow::on_sldZoom_valueChanged(int value)
 {
     size = 1.0 - ((1.0 * (double)value / (double)ui->sldZoom->maximum() - 0.0));
     ui->spnZoom->setValue(1000.0 - size * 1000.0);
+    MandelbrotThread::setZoom(size);
     //if(iterations < 50)
-    ui->btnRender->click();
+    startRender();
 }
 
 void MainWindow::on_btnRender_clicked()
 {
-    drawMandelbrot(mainImage, iterations, offset, size, start);
-    ui->lblImage->setPixmap(QPixmap::fromImage(mainImage));
+    startRender();
 }
 
 void MainWindow::on_spnZoom_valueChanged(double arg1)
@@ -119,12 +124,24 @@ void MainWindow::on_spnIterations_valueChanged(int arg1)
 void MainWindow::on_spnComplexReal_valueChanged(double arg1)
 {
     start.real() = (arg1);
-    ui->btnRender->click();
+    MandelbrotThread::setCritical(start);
+    startRender();
 }
 
 void MainWindow::on_spnComplexImaginary_valueChanged(double arg1)
 {
     start.imag() = (arg1);
-    ui->btnRender->click();
+    MandelbrotThread::setCritical(start);
+    startRender();
+}
+
+void MainWindow::workThreadFinished()
+{
+    ui->lblImage->setPixmap(QPixmap::fromImage(mainImage));
+}
+
+void MainWindow::startRender()
+{
+    workThread->start();
 }
 

@@ -16,10 +16,12 @@ QMAKE_LFLAGS += -fopenmp
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    mandelbrot.cpp
+    mandelbrot.cpp \
+    mandelbrotthread.cpp
 
 HEADERS  += mainwindow.h \
     complexnumber.h \
-    mandelbrot.h
+    mandelbrot.h \
+    mandelbrotthread.h
 
 FORMS    += mainwindow.ui

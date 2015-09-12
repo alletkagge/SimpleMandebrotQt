@@ -8,6 +8,7 @@
 #include <QRgb>
 
 #include "complexnumber.h"
+#include "mandelbrotthread.h"
 
 
 namespace Ui {
@@ -41,6 +42,9 @@ private slots:
 
     void on_spnComplexImaginary_valueChanged(double arg1);
 
+public slots:
+    void workThreadFinished();
+
 private:
     Ui::MainWindow *ui;
     int iterations;
@@ -51,6 +55,10 @@ private:
     ComplexNumber start;
 
     QImage mainImage;
+
+    MandelbrotThread *workThread;
+
+    void startRender();
 };
 
 #endif // MAINWINDOW_H
